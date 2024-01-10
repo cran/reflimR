@@ -1,0 +1,28 @@
+Package: reflimR
+Type: Package
+Title: Reference Limit Estimation Using Routine Laboratory Data
+Version: 1.0.6
+Date: 2023-12-22
+Authors@R: c(person("Georg", "Hoffmann", role = c("aut", "cre"),
+                     email = "georg.hoffmann@trillium.de"),
+                     person("Sandra", "Klawitter", role = "aut"),
+                     person("Frank", "Klawonn", role = "aut"))
+Maintainer: Georg Hoffmann <georg.hoffmann@trillium.de>
+Description: Uses an indirect method based on truncated quantile-quantile plots to estimate reference limits from routine laboratory data. The principle of the method was developed by Robert G Hoffmann (1963) <doi:10.1001/jama.1963.03060110068020> and modified by Georg Hoffmann and colleagues (2015) <doi:10.1515/labmed-2015-0104>, (2020) <doi:10.1515/labmed-2020-0005>, and (2022) <doi:10.1007/978-3-031-15509-3_31>. 
+URL: https://github.com/reflim/reflimR
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports: stats, graphics, grDevices
+Depends: R (>= 3.5.0)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
+BugReports: https://github.com/reflim/reflimR/issues
+VignetteBuilder: knitr
+RoxygenNote: 7.2.3
+NeedsCompilation: no
+Packaged: 2024-01-09 04:02:39 UTC; georg
+Author: Georg Hoffmann [aut, cre],
+  Sandra Klawitter [aut],
+  Frank Klawonn [aut]
+Repository: CRAN
+Date/Publication: 2024-01-10 13:10:02 UTC
