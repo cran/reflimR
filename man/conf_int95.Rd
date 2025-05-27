@@ -5,8 +5,7 @@
 Calculates 95 percent confidence intervals for the lower and upper reference limits obtained with the reflim algorithm.
 }
 \usage{
-  conf_int95(n, lower.limit, upper.limit, lognormal = TRUE,
-             apply.rounding = TRUE)
+conf_int95(n, lower.limit, upper.limit, lognormal = TRUE, apply.rounding = TRUE)
 }
 \arguments{
   \item{n}{number of observations}

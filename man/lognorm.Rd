@@ -6,12 +6,11 @@ Suggests lognormal modelling of a numeric vector x by comparing Bowley's quantil
 }
 \usage{
 lognorm(x, cutoff = 0.05, alpha = 0.25, digits = 3,
-          plot.it = TRUE, plot.logtype = TRUE,
-          main = "Bowley skewness", xlab = "x")
+  plot.it = TRUE, plot.logtype = TRUE, main = "Bowley skewness", xlab = "x")
 }
 \arguments{
 \item{x}{numeric vector of positive numbers}
-\item{cutoff}{a skewness threshold for the suggestion of a lognormal distribution}
+\item{cutoff}{skewness threshold for the suggestion of a lognormal distribution}
 \item{alpha}{lower quantile of the range to be regarded (e. g. 0.25 for IQR)}
 \item{digits}{number of digits to be displayed for the Bowley skewness}
 \item{plot.it}{Boolean indicating whether a graphic should be created}

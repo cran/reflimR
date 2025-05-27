@@ -1,12 +1,14 @@
 ---
 title: "reflimR: Estimation of reference limits from routine laboratory results"
-author: "Georg Hoffmann, Sandra Klawitter & Frank Klawonn"
+author: "Georg Hoffmann, Sandra Klawitter, Inga Trulson & Frank Klawonn"
+
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{reflimR: Estimation of reference limits from routine laboratory results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -14,25 +16,25 @@ knitr::opts_chunk$set(
 )
 ```
 
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Data](#data)
-4. [Usage](#usage)
-5. [Quality Assessment](#quality)
-6. [Conclusion](#conclusion)
-7. [References](#references)
+1.  [Introduction](#introduction)
+2.  [Installation](#installation)
+3.  [Dataset](#data)
+4.  [Usage](#usage)
+5.  [Quality Assessment](#quality)
+6.  [Conclusion](#conclusion)
+7.  [References](#references)
 
-# Introduction <a name = "introduction"></a>
+# Introduction <a name = "introduction"></a> {#introduction}
 
-Reference intervals play a crucial role in the medical interpretation and statistical evaluation of laboratory results. By definition, reference intervals include the central 95% of results measured in non-diseased reference individuals.
+Reference intervals play a crucial role in the medical interpretation and statistical evaluation of laboratory results. By definition, reference intervals include the central 95% of results measured in non-diseased reference individuals [1].
 
-In conventional approaches, reference intervals are determined using *direct methods*, which involve collecting laboratory results from a minimum of 120 apparently healthy individuals and calculating the 2.5th and 97.5th percentiles with parametric or non-parametric methods. Although direct methods are currently the gold standard, their implementation can be difficult due to cost and time issues, limited resources, or ethical considerations. In addition, the definition of "obviously healthy" according to medical criteria is rather vague.
+In conventional approaches, reference intervals are determined using *direct methods*, which involve collecting laboratory results from a minimum of 120 apparently healthy individuals and calculating the 2.5th and 97.5th percentiles with parametric or non-parametric methods [1]. Although direct methods are currently the gold standard, their implementation can be difficult due to cost and time issues, limited resources, or ethical considerations. In addition, the definition of "obviously healthy" according to medical criteria is rather vague.
 
-In this article, we present an alternative method that is included in the *reflimR* package. It is an *indirect method* for deriving reference limits from mixed populations, which contain an unknown proportion of sick individuals (usually less than 25 percent). Here, the definition of "obviously healthy" is based on the statistical criterion of a homogeneous distribution to which a normal distribution can be fitted after suitable transformation. 
+In this article, we present an alternative method that is included in the *reflimR* package [2]. It is an *indirect method* [3] for deriving reference limits from mixed populations, which contain an unknown proportion of sick individuals (usually less than 25 percent). Here, the definition of "obviously healthy" is not based on medical criteria, but on the statistical criterion of a homogeneous distribution to which a normal distribution can be fitted after suitable transformation.
 
-Indirect methods are particularly useful when routine data from a laboratory information system are available and direct sampling of non-diseased individuals is not feasible. 
+Indirect methods are particularly useful when routine data from a laboratory information system are available and direct sampling of non-diseased individuals is not feasible.
 
-# Installation <a name = "installation"></a>
+# Installation <a name = "installation"></a> {#installation}
 
 To install the *reflimR* package, open R and enter the following command in the console:
 
@@ -52,15 +54,15 @@ The package is now ready for use in your R environment (e.g. in RStudio). To see
 help(package = reflimR)
 ```
 
-# Data <a name = "data"></a>
+# Dataset <a name = "data"></a>
 
-*reflimR* comes with the [*livertests*](https://archive.ics.uci.edu/ml/datasets/HCV+data) dataset, which has been specifically prepared for the purpose of reference interval estimation with direct and indirect methods. The dataset includes eight different biomarkers (laboratory tests) that have been measured in healthy controls and in patients with liver diseases. Here is an example excerpt from the dataset.
+*reflimR* comes with the [*livertests*](https://archive.ics.uci.edu/dataset/571/hcv+data) dataset, which has been specifically prepared for the purpose of reference interval estimation with direct and indirect methods. The dataset includes eight different biomarkers (laboratory tests) that have been measured in healthy controls and in patients with liver diseases. Here is an example excerpt from the dataset:
 
 ```{r echo = FALSE}
 print(livertests[c(1, 204, 444, 589),])
 ```
 
-In addition, the corresponding reference intervals are stored in the *targetvalues* dataset. The reference interval table has been derived partly from the electronic handbook [Clinical Laboratory Diagnostics](https://www.clinical-laboratory-diagnostics.com) published by L. Thomas, and partly from the manufacturer's assay sheet. 
+In addition, the corresponding reference intervals are stored in the *targetvalues* dataset. The reference interval table has been derived partly from the electronic handbook [Clinical Laboratory Diagnostics](https://www.clinical-laboratory-diagnostics.com) published by L. Thomas, and partly from the manufacturer's assay sheet.
 
 ```{r, echo=FALSE}
 targetvalues
@@ -72,50 +74,51 @@ To adress a specific target interval, e. g. for albumin in women, you may use th
 targetvalues[1, 3 : 4]
 ```
 
-# Usage <a name = "usage"></a>
+# Usage <a name = "usage"></a> {#usage}
 
-The *reflimR* package includes a total of ten functions, of which *reflim(x)* is the main function. It calls the other nine functions that can be arranged in three groups:
+The *reflimR* package includes several functions, with `reflim(x)` serving as the main function. It calls the other important functions that can be arranged in three groups:
 
-group 1                 | group 2                 | group 2
-------------------------|-------------------------|------------------------
-ri_hist                 | lognorm                 | adjust_digits 
-permissible_uncertainty | iboxplot                | bowley
-interpretation          | truncated_qqplot        | conf_int95 
+| group 1                  | group 2           | group 3        |
+|--------------------------|-------------------|----------------|
+| ri_hist                  | lognorm           | adjust_digits  |
+| permissible_uncertainty  | iboxplot          | bowley         |
+| interpretation           | truncated_qqplot  | conf_int95     |
 
-Group 1 includes the three main functions that provide the user with the final results of *reflim()* and help to interpret them: *ri_hist()* creates a graphical output (histogram with reference interval and density curves), *permissible_uncertainty* calculates the medical tolerance limits of the results [1, 2], and *interpretation()* assesses the significance of deviations from given target values.
+Group 1 includes the main functions that provide the user with the final results of `reflim()` and help to interpret them: `ri_hist()` creates a graphical output (histogram with reference interval and density curves), `permissible_uncertainty()` calculates the medical tolerance limits of the results [4, 5], and `interpretation()` assesses the medical significance of deviations from given target values [2].
 
-Group 2 performs the three underlying statistical operations *modelling*, *truncation*, and *calculation*, and group 3 contains auxiliary functions for miscellaneous tasks. Details of each function are available in the respective help files, which can be addressed with the *help()* function or a question mark followed by the function name (e.g. *help(reflim)* or *?lognorm*).
+Group 2 performs the three underlying statistical operations *modelling*, *truncation*, and *calculation*, and group 3 contains auxiliary functions for miscellaneous tasks. Details of each function are available in the respective help files, which can be addressed with the `help()` function or a question mark followed by the function name (e.g. `help(reflim)` or `?lognorm`).
 
-The *reflim* function can be executed by simply calling *reflim(x)*, where x is a vector of numeric data to be analyzed. For example, if the reference interval for bilirubin is to be estimated from the values included in the *livertests* dataset, the following two lines of code will suffice:
+The *reflim* function can be executed by simply calling `reflim(x)`, where x is a vector of numeric data to be analyzed. For example, if the reference interval for bilirubin is to be estimated from the values included in the *livertests* dataset, the following two lines of code will suffice:
 
 ```{r fig.width=5, fig.height=5}
 x <- livertests$BIL
 reflim(x)
 ```
 
-Please note that any filtering and cleaning (e. g. for removal of non-numeric values or duplicate results of a single individual) or partitioning of the data (for sex, age, etc) is not included in the *reflimR* package. These steps can easily be performed separately with base R functions such as *as.numeric()*, *unique()* or *subset()* to achieve the desired results. 
+Please note that any filtering and cleaning (e. g. for removal of non-numeric values or duplicate results of a single individual) or partitioning of the data (for sex, age, etc) is not included in the *reflimR* package. These steps can easily be performed separately with base R functions such as `as.numeric()`, `unique()` or `subset()` to achieve the desired results.
 
-As shown above, the main result of the *reflim()* function is an illustrative graphic showing a histogram of the original data with a dotted overall density curve. The estimated reference limits are displayed as dashed vertical lines and the respective medical tolerance limits as gray bars. The blue solid density curve represents the theoretical distribution of the assumed reference population, and the density curves of potential pathological outliers are shown in red. 
+As shown above, the main result of the *reflim* function is an illustrative graphic showing a histogram of the original data with a dotted overall density curve. The estimated reference limits are displayed as dashed vertical lines and the respective medical tolerance limits as gray bars. The blue solid density curve represents the theoretical distribution of the assumed reference population, and the density curves of potential pathological outliers are shown in red.
 
 Below the graphic, there is a list of statistical results such as the parameters of the theoretical distribution (*stats*), the assumed distribution model (*lognormal* = TRUE or FALSE), and the calculated reference limits with tolerance intervals (*limits*). On the bottom of the list is an estimate of the 95 percent confidence intervals for the lower and upper reference limits (*confidence.int*). The remaining results are set to NA if no target values were specified.
 
-The *reflim* function comes with nine additional arguments that default to meaningful values for a quick overview. They are accessible via the help file (*?reflim*) and can be changed if needed. For example, if you want the graphic to be nicely labeled and the targets from the *targetvalues* dataset to be verified, you can specify the *main*, *xlab*, and *targets* arguments. And if you want to limit the output of the function to some essentials, you can specify what you want to see with a $ after the closing parenthesis.
+The *reflim* function comes with additional arguments that default to meaningful values for a quick overview. They are accessible via the help file (`?reflim`) and can be changed if needed. For example, if you want the graphic to be nicely labeled and the targets from the *targetvalues* dataset to be verified, you can specify the *main*, *xlab*, and *targets* arguments. And if you want to limit the output of the function to some essentials such as just the interpretation of the graphic, you can specify what you want to see with a \$ after the closing parenthesis.
 
-```{r fig.width=5, fig.height=5} 
-reflim(x, main = "bilirubin", xlab = "µmol/L", targets = targetvalues[4, 5 : 6])$interpretation
+```{r fig.width=5, fig.height=5}
+x <- livertests$PROT
+reflim(x, main = "total protein", xlab = "g/L", targets = targetvalues[8, 3 : 4])$interpretation
 ```
 
-**Interpretation with traffic light colors**
+### **Interpretation with traffic light colors**
 
 If target values have been specified, the other two functions of group 1 are used to check whether the calculated reference limits are within the permitted tolerance limits and assigns traffic light colors to visually indicate any deviations. Green means that the calculated limit is within the tolerance interval of the target, yellow means that the calculated limit falls outside but the two tolerance intervals overlap, and red means that there is no overlap between the tolerance intervals.
 
-*ri_hist()*, *permissible_uncertainty()* and *interpretation()* are called by the *reflim* function, but can also be used independently for the evaluation of reference limits obtained by other methods (e.g., from the *refineR* package). 
+`ri_hist()`, `permissible_uncertainty()` and `interpretation()` are called by the *reflim* function, but can also be used independently for the evaluation of reference limits obtained by other methods (e.g., from the *refineR* package).
 
-**Three steps to the result**
+### **Three steps to the result**
 
 As already mentioned, *reflimR* performs an indirect three-step approach. The underlying functions form the group 2 in the above table. Here is an overview with some practical examples.
 
-**Step 1:** To define an appropriate distribution model, Bowley's quartile skewness coefficient [3] is calculated for the original and the logarithmized data, using the *bowley* function from group 3. The underlying algorithm is quite robust against pathological outliers, because it is calculated from the central 50 percent of the data (the "box" of Tukey's boxplot), where the influence of pathological values is minimized [4]. If the skewness coefficient is close to 0, the distribution is symmetric and can be approximated by a normal distribution (at least in the range of interest between the 2.5th and 97.5th percentiles). If, however, the skewness coefficient is clearly positive, the distribution is right-skewed. If the shape of the curve becomes more symmetric after log-transformation of the data, the *lognorm* function indicates that the distribution can be better approximated by a lognormal model.
+**Step 1:** To define an appropriate distribution model, Bowley's quartile skewness coefficient [6] is calculated for the original and the logarithmized data, using the *bowley* function from group 3. The underlying algorithm is quite robust against pathological outliers, because it is calculated from the central 50 percent of the data (the "box" of Tukey's boxplot), where the influence of pathological values is minimized [7]. If the skewness coefficient is close to 0, the distribution is symmetric and can be approximated by a normal distribution (at least in the range of interest between the 2.5th and 97.5th percentiles). If, however, the skewness coefficient is clearly positive, the distribution is right-skewed. If the shape of the curve becomes more symmetric after log-transformation of the data, the *lognorm* function indicates that the distribution can be better approximated by a lognormal model.
 
 Here is an example of a symmetric distribution from the albumin data using the *lognorm* function:
 
@@ -123,119 +126,130 @@ Here is an example of a symmetric distribution from the albumin data using the *
 lognorm(livertests$ALB, main = "albumin", xlab = "g/L")
 ```
 
-The skewness coefficient of the original values is 0.019 and the shape of the black curve is not much changed after log-transformation (blue). The difference of the two skewness coefficients is 0.038, i. e. below the threshold of 0.05, which has been defined as a fixed value in the *lognorm* function [4].
+The skewness coefficient of the original values is 0.019 and the shape of the black curve is not much changed after log-transformation (blue). The difference of the two skewness coefficients is 0.038, i. e. below the threshold of 0.05, which has been defined as a fixed value in the *lognorm* function [7].
 
 In contrast, alanine aminotransferase is an example for an asymmetric distribution:
 
 ```{r fig.width=5, fig.height=5}
-lognorm(livertests$ALT, main = "alanine aminotransferase", xlab = "µmol/L")
+lognorm(livertests$ALT, main = "alanine aminotransferase", xlab = "U/L")
 ```
 
 Here, the original distribution curve (black) is clearly right-skewed with a skewness coefficient of 0.207, and becomes more symmetrical after logarithmization of the data (blue). The delta of the skewness coefficients is 0.171 and thus above the threshold of 0.05.
 
 If a lognormal distribution is recommended in step 1, the values are logarithmized by the *reflim* function so that the normal distribution assumption can be used in the next two steps.
 
-**Step 2:** Subsequently, the data set is truncated in an iterative way such that the presumably pathological values are removed as best as possible and the central 95% of the presumably non-pathological values remain without substantial losses. To achieve this, we adopt the *iboxplot()* algorithm, [5], which is again based on Tukey's boxplot. Starting with the central 50 percent of the data (i. e. the values between the first and the third quartile), the theoretical 2.5th and 97.5th percentiles of a Gaussian distribution are calculated and values beyond these boundaries are removed. This algorithm is repeated until no more outliers are removed. After the first truncation step, the calculation of the 2.5th and 97.5th percentiles is adapted to the fact that the data vector has already been truncated [5].
+**Step 2**: Subsequently, the data set is truncated iteratively in multiple steps to remove  pathological values while preserving the central 95% of the presumably non-pathological values as accurately as possible [8]. Instead of immediately truncating at the theoretical 2.5th and 97.5th percentiles (as implemented in the original package version 1.0.6), a more cautious, step-by-step truncation process has been introduced in the updated package version 1.1.0. This is done by successively adjusting the truncation threshold to the 99.5th, 99th, 98.5th, 0.98th, and 97.5th percentiles. After the last truncation step, the algorithm is continued with the final threshold of 97.5 percent until no more outliers can be removed.
 
 Here is an application of the *iboxplot* function using the bilirubin dataset as an example:
 
 ```{r fig.width=5, fig.height=5}
 x <- livertests$BIL
-x1 <- iboxplot(x, main = "bilirubin", xlab = "µmol/L")
+trunc.bil <- iboxplot(x, main = "bilirubin", xlab = "µmol/L")
 ```
 
-The upper boxplot (white) shows a considerable amount of dots outside the whiskers, which are effectively removed with two cycles of the *iboxplot* algorithm (blue boxplot). Between cycles 2 and 3, no more values are removed, so the algorithm stops at this point:
+The upper boxplot (white) shows a considerable amount of dots outside the whiskers, which are effectively removed with seven cycles of the *iboxplot* algorithm (blue boxplot). The eighth cycles confirms that the algorithm has converged:
+
 
 ```{r}
-x1$progress
+trunc.bil$progress
 ```
 
-The *iboxplot* function derives the estimated percentage of "normal values" from the length of the truncated vector *x1$trunc* by dividing it by 0.95:
+The *iboxplot* function derives the estimated percentage of "normal values" from the length of the truncated vector *trunc.bil\$trunc*, divided by the proportion of assumed non-pathological values (e.g. 0.95 as a default) :
 
 ```{r}
-x1$perc.norm
+trunc.bil$perc.norm
 ```
 
-Notably, the lower and upper truncation points are rough estimates of the reference limits:
+Notably, the lower and upper truncation points are rough estimates of the reference limits (i.e. the 2.5th and 97.5th quantile of the non-pathological values):
 
 ```{r}
-x1$truncation.points
+trunc.bil$truncation.points
 ```
 
-
-**Step 3:** To improve the robustness of this estimate even further, a normal quantile-quantile plot (Q-Q plot) is created from the truncated data [4]. The function *truncated_qqplot* determines the mean and standard deviation from the intercept and the slope of the regression line and extrapolates the 2.5th and 97.5th percentiles from the equation *mean ± 1.96 sd*. These percentiles represent the estimated reference interval, and thus the final result.
+**Step 3:** To improve the robustness of this estimate even further, a normal quantile-quantile plot (Q-Q plot) is created from the truncated data [9]. The function `truncated_qqplot()` determines the mean and standard deviation from the intercept and the slope of the regression line and extrapolates the 2.5th and 97.5th percentiles from the equation *mean ± 1.96 sd*. These percentiles represent the estimated reference interval, and thus the final result.
 
 ```{r fig.width=5, fig.height=5}
-truncated_qqplot(x1$trunc)
+truncated_qqplot(trunc.bil$trunc)
 ```
 
 If the calculation was carried out with logarithmized values, the resulting reference limits are automatically delogarithmized.
 
-As already mentioned in step 2, the truncation points of step 2 are close to the final result of step 3, but they are not identical. The reason is that extrapolating the respective percentiles from the linear Q-Q plot obviously stabilizes the result and makes it more robust against minor overlaps with pathological values at the ends of the regression line. To achieve this, only the central 90 percent of the Q-Q plot are used for the calculation of the regression line. 
+As already mentioned in step 2, the truncation points of step 2 are close to the final result of step 3, but they are not identical. The reason is that extrapolating the respective percentiles from the linear Q-Q plot obviously stabilizes the result and makes it more robust against minor overlaps with pathological values at the ends of the regression line (see above). To achieve this, only the central 90 percent of the Q-Q plot are used for the calculation of the regression line.
 
 # Quality Assessment <a name = "quality"></a>
 
-If you want to visualize the whole process at a glance, you can set the *plot.all* argument of the *reflim* function to TRUE to display four graphics. Here is an example of GGT results for women:
+If you want to visualize the whole process at a glance, you can set the *plot.all* argument of the *reflim* function to TRUE to display four graphics. Here is an example of AST results for women:
 
 ```{r fig.width=8, fig.height=8}
-ggt.f <- livertests$GGT[livertests$Sex == "f"] 
-reflim(ggt.f, plot.all = TRUE, n.min = 150,
-       targets = targetvalues[7, 3 : 4],
-       main = "GGT (f)", xlab = "U/L")$interpretation
+ast.f <-  reflim(livertests$AST[livertests$Sex == "f"], plot.all = TRUE, n.min = 150,
+       targets = targetvalues[3, 3 : 4],
+       main = "AST (f)", xlab = "U/L")
 ```
 
-In the present case, the Q-Q plot is quite linear, so the reference interval of 6.8 to 38.7 U/L seems credible. The respective target values are 6 to 40 U/L.
-
-The linearity of the Q-Q plot is a visual measure of the data quality. If you repeat the above calculation with the respective values for men, you will obtain a density curve with a small pathological fraction that partially overlaps with the "box" of the boxplot:  
+In the present case, the Q-Q plot is quite linear, so the reference interval seems credible. The linearity of the Q-Q plot is a visual measure of the data quality. However, if you do the same analysis with total protein (PROT) for women, you will obtain a density curve with a small pathological fraction that partially overlaps with the "box" of the boxplot:
 
 ```{r fig.width=6, fig.height=4}
-ggt.m <- livertests$GGT[livertests$Sex == "m"] 
-ln <- lognorm(ggt.m, main = "GGT (m)", xlab = "U/L")
-arrows(46, 0.015, 46, 0.02, code = 1, length = 0.1, lwd = 2)
+prot.f <- livertests$PROT[livertests$Sex == "f"] 
+ln <- lognorm(prot.f, main = "PROT (f)", xlab = "g/L")
+arrows(76, 0.055, 76, 0.075, code = 1, length = 0.1, lwd = 2)
 ```
 
 This fraction cannot be completely removed by the *iboxplot* algorithm:
 
 ```{r fig.width=6, fig.height=4}
-xtrunc.m <- iboxplot(ggt.m, xlab = "U/L")$trunc 
-arrows(55, 0.007, 55, 0.012, code = 1, length = 0.1, lwd = 2)
+xtrunc.f <- iboxplot(prot.f, xlab = "g/L")$trunc 
+arrows(77.5, 0.07, 77.5, 0.09, code = 1, length = 0.1, lwd = 2)
 ```
 
-As a result, the Q-Q plot shows visible deviations from linearity:
+As a result, the Q-Q plot shows a characteristic deviation from linearity at the upper right end:
 
 ```{r fig.width=6, fig.height=4}
-qq.m <- truncated_qqplot(xtrunc.m) 
-arrows(1.5, log(30), 1.5, log(45), code = 2, length = 0.1, lwd = 2)
+qq.f <- truncated_qqplot(xtrunc.f, n.min = 100) 
+arrows(1.4, 80, 1.4, 77.5, code = 2, length = 0.1, lwd = 2)
 ```
 
-Therefore, the estimated reference interval of 9.4 to 61.4 U/L should be interpreted with caution. In such cases, we recommend to repeat the test using a comparative method (e.g. *refineR*) and to consult the literature.
+Therefore, the estimated reference interval should be interpreted with caution. In such cases, we recommend to repeat the test using a comparative method (e.g. *refineR*) and to consult the literature. You may also try to run the reflim function with a higher value of the argument perc.trunc (e.g. 5 instead of 2.5) to achieve a stronger truncation of the values:
 
-# Conclusion <a name = "conclusion"></a>
+```{r fig.width=6, fig.height=6}
+reflim(prot.f, perc.trunc = 5, n.min = 100,  plot.all = TRUE, print.n = FALSE, 
+       main = "PROT (f)", xlab = "g/L")$limits[1 : 2]
+```
 
-The *reflimR* package provides a simple and robust three-step procedure for the estimation of reference intervals from routine laboratory data that may contain an unknown proportion of pathological results. Due to the fact that the initial two steps of the algorithm are based on quartiles (i. e. the central 50 percent of the original results), this proportion should not exceed 25 percent on one side of the distribution.
+The two lower graphics demonstrate that the subfraction of pathological values has now been removed (left graphic) and the Q-Q plot becomes linear (right graphic). As a consequence, the resulting reference interval becomes slightly smaller.
 
-Compared to many other algorithms, the *reflim* function is extremely fast. This is mainly achieved by the fact that it does not use elaborate procedures to optimize a theoretical distribution model: For symmetric distributions, it assumes a normal distribution in the range between the 2.5th and 97.5th percentiles, and for right-skewed distributions, the data are logarithmized to approximate a lognormal distribution in the same range. Left-skewed distributions are assumed to be mixtures of a symmetric distribution and pathological outliers on the left side. If the distribution type is unclear, you can assume a lognormal distribution (i. e. set the *lognorm* argument to TRUE) without risking large errors in the estimation [7].
+# Conclusion <a name = "conclusion"></a> {#conclusion}
 
-Due to an intuitive traffic light color scheme, the estimated reference limits can easily be verified against target values from external sources (e. g., from package inserts or handbooks). The assessment of any deviations is based on the degree of overlap between the corresponding tolerance intervals, which makes the interpretation easy and transparent.
+The *reflimR* package provides a simple and robust three-step procedure for the estimation of reference intervals from routine laboratory data that may contain an unknown proportion of pathological results. Due to the fact that the initial two steps of the algorithm are based on quartiles (i. e. the central 50 percent of the original results), the proportion of potentially pathological values should not exceed 25 percent on one side of the distribution.
 
-Our method falls into the category of the so-called "modified Hoffmann approaches", which are derived from the original method published by RG Hoffmann in 1963 [8]. The common element of these methods is that they are based on the evaluation of a regression line obtained by comparing the distribution of observed values with a standard normal distribution. In the original Hoffmann method, a probability-probability plot is generated, whereas most of the modifications including ours use a quantile-quantile plot. 
+Compared to many other algorithms, the *reflim* function is extremely fast. This is mainly achieved by the fact that it does not use elaborate procedures to optimize a theoretical distribution model: For symmetric distributions, it assumes a normal distribution in the range between the 2.5th and 97.5th percentiles, and for right-skewed distributions, the data are logarithmized to approximate a lognormal distribution in the same range. Left-skewed distributions are assumed to be mixtures of a symmetric distribution and pathological outliers on the left side. If the distribution type is unclear, a lognormal distribution can be assumed (by setting the *lognorm* argument to TRUE) without risking large errors in the estimation [10].
 
-Other modifications concern a) the transformation of the original data to approximate a normal distribution, b) the type of truncation to eliminate potentially pathological outliers, and c) the identification of the linear part of the regression line. In the original Hoffmann method [8] as well as in our own original modification [6], this straight part was identified by visual inspection, whereas the method included in this package is fully automated and independent of any subjective judgment. 
+Due to an intuitive traffic light color scheme, the estimated reference limits can easily be verified against target values from external sources (e. g., from package inserts or handbooks) [2]. The assessment of any deviations is based on the degree of overlap between the corresponding tolerance intervals, which makes the interpretation easy and transparent.
 
-# References <a name = "references"></a>
+Our method falls into the category of the so-called "modified Hoffmann approaches", which are derived from the original method published by RG Hoffmann in 1963 [11]. The common element of these methods is that they are based on the evaluation of a regression line obtained by comparing the distribution of observed values with a standard normal distribution. In the original Hoffmann method, a probability-probability plot is generated, whereas most of the modifications including ours use a quantile-quantile plot.
 
-1. Haeckel R et al. Permissible limits for uncertainty of measurement in laboratory medicine. Clin Chem Lab Med 2015;53:1161–71. \doi{10.1515/cclm-2014-0874}.
+Other modifications concern a) the transformation of the original data to approximate a normal distribution, b) the type of truncation to eliminate potentially pathological outliers, and c) the identification of the linear part of the regression line. In the original Hoffmann method [11] as well as in our own original modification [9], this straight part was identified by visual inspection, whereas the method included in this package is fully automated and independent of any subjective judgment.
 
-2. Haeckel R et al. Equivalence limits of reference intervals for partitioning of population data. J Lab Med 2016; 40: 199-205. \doi{10.1515/labmed-2016-0002}.
+# References <a name = "references"></a> {#references}
 
-3. Bowley, AL (1920). Elements of Statistics. London : P.S. King & Son, Ltd.
+1. Clinical and Laboratory Standards Institute document EP28-A3c—Defining, Establishing, and Verifying Reference Intervals in the Clinical Laboratory. 2010;ISBN 1-56238-682-4. <https://clsi.org/shop/standards/ep28/>.
 
-4. Klawonn F, Hoffmann G, Orth M. Quantitative laboratory results: normal or lognormal distribution. J Lab Med 2020; 44: 143–50. \doi{10.1515/labmed-2020-0005}.
+2. Hoffmann, G., Klawitter, S., Trulson, I., Adler, J., Holdenrieder, S., & Klawonn, F. (2024). A Novel Tool for the Rapid and Transparent Verification of Reference Intervals in Clinical Laboratories. Journal of clinical medicine, 13(15), 4397. <https://doi.org/10.3390/jcm13154397>.
 
-5. Klawonn F, Hoffmann G. Using fuzzy cluster analysis to find interesting clusters. In: L.A. Garcia-Escuderoet al. (eds.): Building bridges between soft and statistical methodologies for data science. Springer, Cham (2023), 231-239. \doi{10.1007/978-3-031-15509-3_31}.
+3. Jones G, Haeckel R, Loh T, Sikaris K, Streichert T, Katayev A, Barth J, Ozarda Y. Indirect methods for reference interval determination: Review and recommendations. Clin. Chem. Lab. Med. 2018, 57, 20–29.<https://doi.org/10.1515/cclm-2018-0073>
 
-6. Hoffmann G et al. Simple estimation of reference intervals from routine laboratory data. J Lab Med 2016. \doi{10.1515/labmed-2015-0104}.
+4.  Haeckel R et al. Permissible limits for uncertainty of measurement in laboratory medicine. Clin Chem Lab Med 2015;53:1161–71. <https://doi.org/10.1515/cclm-2014-0874>.
 
-7. Haeckel R, Wosniok W. Observed, unknown distributions of clinical chemical quantities should be considered to be log-normal: a proposal. Clin Chem Lab Med. 2010; 48: 1393–6 \doi{10.1515/CCLM.2010.273}.
+5.  Haeckel R, Wosniok W, Arzideh F. Equivalence limits of reference intervals for partitioning of population data. J Lab Med 2016; 40: 199-205. <https://doi.org/10.1515/labmed-2016-0002>.
 
-8. Hoffmann RG. Statistics in the practice of medicine. J Am Med Assoc 1963; 185: 864–73.
+6.  Bowley, AL (1920). Elements of Statistics. London : P.S. King & Son, Ltd.
+
+7.  Klawonn F, Hoffmann G, Orth M. Quantitative laboratory results: normal or lognormal distribution. J Lab Med 2020; 44: 143–50. <https://doi.org/10.1515/labmed-2020-0005>.
+
+8.  Klawonn F, Hoffmann G. Using fuzzy cluster analysis to find interesting clusters. In: L.A. Garcia-Escuderoet al. (eds.): Building bridges between soft and statistical methodologies for data science. Springer, Cham (2023), 231-239. <https://doi.org/10.1007/978-3-031-15509-3_31>.
+
+9.  Hoffmann G, Lichtinghagen R, Wosniok W. Simple estimation of reference intervals from routine laboratory data. J Lab Med 2016. <https://doi.org/10.1515/labmed-2015-0104>.
+
+10.  Haeckel R, Wosniok W. Observed, unknown distributions of clinical chemical quantities should be considered to be log-normal: a proposal. Clin Chem Lab Med. 2010; 48: 1393–6 <https://doi.org/10.1515/CCLM.2010.273>.
+
+11.  Hoffmann RG. Statistics in the practice of medicine. J Am Med Assoc 1963; 185: 864–73.
+

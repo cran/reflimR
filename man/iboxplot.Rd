@@ -6,20 +6,19 @@ Iteratively truncates a vector of quantitative laboratory results until no more 
 }
 \usage{
 iboxplot(x, lognormal = NULL, perc.trunc = 2.5,
-apply.rounding = TRUE,
-plot.it = TRUE, main = "iBoxplot", xlab = "x")
+  apply.rounding = TRUE, plot.it = TRUE, main = "iBoxplot", xlab = "x")
 }
 \arguments{
 \item{x}{vector of positive numbers}
 \item{lognormal}{Boolean indicating whether a lognormal distribution should be assumed (NULL means that the distribution type is defined automatically)}
-\item{perc.trunc}{percentage of presumably normal values to be removed from each side}
+\item{perc.trunc}{percentage of presumably normal values to be removed from each side. If perc.trunc is increased (e.g. to 3.5 instead of 2.5), more values are removed.}
 \item{apply.rounding}{Boolean indicating whether the estimated reference limits should be rounded}
 \item{plot.it}{Boolean indicating whether a graphic should be created}
 \item{main, xlab}{title and x label of the graphic}
 }
 \value{
 \item{$trunc}{truncated vector x}
-\item{$limits}{truncation points, preliminary reference limits}
+\item{$truncation.points}{truncation points, preliminary reference limits}
 \item{$lognormal}{Boolean indicating whether a lognormal distribution has been assumed}
 \item{$perc.norm}{proportion of the assumed non-pathological values}
 \item{$progress}{results of the iterative truncation}

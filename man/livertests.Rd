@@ -22,7 +22,7 @@ A data frame with 612 rows and 11 columns:
 }
 }
 \source{
-<https://archive.ics.uci.edu/ml/datasets/HCV+data>
+<https://archive.ics.uci.edu/dataset/571/hcv+data>
 }
 \usage{
 livertests

@@ -27,46 +27,50 @@ x <- livertests$BIL
 reflim(x)
 
 ## ----fig.width=5, fig.height=5------------------------------------------------
-reflim(x, main = "bilirubin", xlab = "µmol/L", targets = targetvalues[4, 5 : 6])$interpretation
+x <- livertests$PROT
+reflim(x, main = "total protein", xlab = "g/L", targets = targetvalues[8, 3 : 4])$interpretation
 
 ## ----fig.width=5, fig.height=5------------------------------------------------
 lognorm(livertests$ALB, main = "albumin", xlab = "g/L")
 
 ## ----fig.width=5, fig.height=5------------------------------------------------
-lognorm(livertests$ALT, main = "alanine aminotransferase", xlab = "µmol/L")
+lognorm(livertests$ALT, main = "alanine aminotransferase", xlab = "U/L")
 
 ## ----fig.width=5, fig.height=5------------------------------------------------
 x <- livertests$BIL
-x1 <- iboxplot(x, main = "bilirubin", xlab = "µmol/L")
+trunc.bil <- iboxplot(x, main = "bilirubin", xlab = "µmol/L")
 
 ## -----------------------------------------------------------------------------
-x1$progress
+trunc.bil$progress
 
 ## -----------------------------------------------------------------------------
-x1$perc.norm
+trunc.bil$perc.norm
 
 ## -----------------------------------------------------------------------------
-x1$truncation.points
+trunc.bil$truncation.points
 
 ## ----fig.width=5, fig.height=5------------------------------------------------
-truncated_qqplot(x1$trunc)
+truncated_qqplot(trunc.bil$trunc)
 
 ## ----fig.width=8, fig.height=8------------------------------------------------
-ggt.f <- livertests$GGT[livertests$Sex == "f"] 
-reflim(ggt.f, plot.all = TRUE, n.min = 150,
-       targets = targetvalues[7, 3 : 4],
-       main = "GGT (f)", xlab = "U/L")$interpretation
+ast.f <-  reflim(livertests$AST[livertests$Sex == "f"], plot.all = TRUE, n.min = 150,
+       targets = targetvalues[3, 3 : 4],
+       main = "AST (f)", xlab = "U/L")
 
 ## ----fig.width=6, fig.height=4------------------------------------------------
-ggt.m <- livertests$GGT[livertests$Sex == "m"] 
-ln <- lognorm(ggt.m, main = "GGT (m)", xlab = "U/L")
-arrows(46, 0.015, 46, 0.02, code = 1, length = 0.1, lwd = 2)
+prot.f <- livertests$PROT[livertests$Sex == "f"] 
+ln <- lognorm(prot.f, main = "PROT (f)", xlab = "g/L")
+arrows(76, 0.055, 76, 0.075, code = 1, length = 0.1, lwd = 2)
 
 ## ----fig.width=6, fig.height=4------------------------------------------------
-xtrunc.m <- iboxplot(ggt.m, xlab = "U/L")$trunc 
-arrows(55, 0.007, 55, 0.012, code = 1, length = 0.1, lwd = 2)
+xtrunc.f <- iboxplot(prot.f, xlab = "g/L")$trunc 
+arrows(77.5, 0.07, 77.5, 0.09, code = 1, length = 0.1, lwd = 2)
 
 ## ----fig.width=6, fig.height=4------------------------------------------------
-qq.m <- truncated_qqplot(xtrunc.m) 
-arrows(1.5, log(30), 1.5, log(45), code = 2, length = 0.1, lwd = 2)
+qq.f <- truncated_qqplot(xtrunc.f, n.min = 100) 
+arrows(1.4, 80, 1.4, 77.5, code = 2, length = 0.1, lwd = 2)
+
+## ----fig.width=6, fig.height=6------------------------------------------------
+reflim(prot.f, perc.trunc = 5, n.min = 100,  plot.all = TRUE, print.n = FALSE, 
+       main = "PROT (f)", xlab = "g/L")$limits[1 : 2]
 

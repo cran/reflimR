@@ -4,8 +4,8 @@
 \description{Creates a graphic illustrating the results of the reflim function.}
 \usage{
 ri_hist(x, lognormal, stats, limits, perc.norm,
-                    targets = NULL, remove.extremes = TRUE,
-                    main = "reflim", xlab = "x")
+  targets = NULL, remove.extremes = TRUE,
+  main = "reflim", xlab = "x")
 }
 \arguments{
 \item{x}{vector of positive numbers}

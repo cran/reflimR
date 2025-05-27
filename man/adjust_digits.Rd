@@ -1,6 +1,6 @@
 \name{adjust_digits}
 \alias{adjust_digits}
-\title{Plausible rounding}
+\title{Plausible Rounding}
 \description{
 Rounds a quantitative laboratory result to a reasonable number of decimal places.
 }
@@ -8,10 +8,11 @@ Rounds a quantitative laboratory result to a reasonable number of decimal places
 adjust_digits(x)
 }
 \arguments{
-\item{x}{numeric}
+\item{x}{numeric value}
 }
 \value{
-List containing a rounded value of x and the number of decimal places
+\item{x.round}{The rounded value of x}
+\item{digits}{The number of decimal places}
 }
 \examples{
 adjust_digits(0.001234)

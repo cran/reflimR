@@ -1,7 +1,8 @@
 \name{interpretation}
 \alias{interpretation}
 \title{Colors and text modules to interprete deviations from given  target values}
-\description{Creates traffic light colors green, yellow, and red as well as a textual description such as 'slightly increased'. This function is called by reflim(), if target values are available, and provides the required color information for ri_hist().}
+\description{
+Creates traffic light colors green, yellow, and red as well as a textual description such as 'slightly increased'. This function is called by reflim(), if target values are available, and provides the required color information for ri_hist().}
 \usage{interpretation(limits, targets)}
 \arguments{
 \item{limits}{vector of two numbers indicating the reference limits that have been calculated by the reflim function (or any other suitable algorithm)}

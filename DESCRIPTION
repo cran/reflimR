@@ -1,28 +1,30 @@
 Package: reflimR
 Type: Package
 Title: Reference Limit Estimation Using Routine Laboratory Data
-Version: 1.0.6
-Date: 2023-12-22
+Version: 1.1.0
+Date: 2025-05-25
 Authors@R: c(person("Georg", "Hoffmann", role = c("aut", "cre"),
                      email = "georg.hoffmann@trillium.de"),
                      person("Sandra", "Klawitter", role = "aut"),
+                     person("Inga", "Trulson", role = "aut"),
                      person("Frank", "Klawonn", role = "aut"))
 Maintainer: Georg Hoffmann <georg.hoffmann@trillium.de>
-Description: Uses an indirect method based on truncated quantile-quantile plots to estimate reference limits from routine laboratory data. The principle of the method was developed by Robert G Hoffmann (1963) <doi:10.1001/jama.1963.03060110068020> and modified by Georg Hoffmann and colleagues (2015) <doi:10.1515/labmed-2015-0104>, (2020) <doi:10.1515/labmed-2020-0005>, and (2022) <doi:10.1007/978-3-031-15509-3_31>. 
-URL: https://github.com/reflim/reflimR
+Description: Uses an indirect method based on truncated quantile-quantile plots to estimate reference limits from routine laboratory data: Georg Hoffmann and colleagues (2024) <doi: 10.3390/jcm13154397>. The principle of the method was developed by Robert G Hoffmann (1963) <doi:10.1001/jama.1963.03060110068020> and modified by Georg Hoffmann and colleagues (2015) <doi:10.1515/labmed-2015-0104>, and Frank Klawonn and colleagues (2020) <doi:10.1515/labmed-2020-0005>, (2022) <doi:10.1007/978-3-031-15509-3_31>. 
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Imports: stats, graphics, grDevices
 Depends: R (>= 3.5.0)
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
-BugReports: https://github.com/reflim/reflimR/issues
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+URL: https://github.com/reflim/reflimR
+BugReports: https://github.com/reflim/reflimR/issues
+RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2024-01-09 04:02:39 UTC; georg
+Packaged: 2025-05-27 22:02:24 UTC; Georg
 Author: Georg Hoffmann [aut, cre],
   Sandra Klawitter [aut],
+  Inga Trulson [aut],
   Frank Klawonn [aut]
 Repository: CRAN
-Date/Publication: 2024-01-10 13:10:02 UTC
+Date/Publication: 2025-05-27 23:00:02 UTC
